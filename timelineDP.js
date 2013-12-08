@@ -5,24 +5,34 @@ d3.json("timelineDP.json", function(data) {
     /*map the month values of the json array into a new array composed only of month values
      //then find the maximum value of that array
      var monthMax = Math.max.apply(Math,data.map(function(d){return d.month;}));
-     alert(monthMax);
      */
 
     var event;
     var closeEvent;
     var closeEventCircle;
     var eventImage;
+    var eventDescription;
+    var dText;
+    var date;
+    var dateBox;
     var eventId;
-    //var xOut;
+    var eventHeight=300;
+    var descriptionText;
+    var dLength;
 
-    //   var clicked=false;
-    
-   
-    
+
+
     var dataL = data.length; //returns number of timeline events
 
-    var urls = data.map(function(d){return d.image_url;}); //creates array of image urls
-
+    var urls = data.map(function(d) {
+        return d.image_url;
+    }); //creates array of image urls
+    var descriptions = data.map(function(d) {
+        return d.description;
+    }); //creates array of event descriptions
+    
+  
+    
     var years = data.map(function(d) {
         return d.year;
     }); //creates new array of only years
@@ -92,13 +102,13 @@ d3.json("timelineDP.json", function(data) {
             .orient("bottom")
             .tickFormat(d3.format(Number.toPrecision));
 
-//var dataScale=scaledYears.slice(0); //creates a new array "dataScale" that is equivilant to scaledYears. ".slice" can be ommitted, if desired.
 
 
     var canvas = d3.select("body")
             .append("svg")
             .attr("width", 600)
             .attr("height", 450)
+            .attr("id", "canvas")
             .style("position", "fixed");
 
 
@@ -129,7 +139,12 @@ d3.json("timelineDP.json", function(data) {
         return d;
     })
             .data(data)
-            .attr("id",function(d){return  d.event_number;})
+            .attr("id", function(d) {
+        return  d.event_number;
+    })
+            .attr("text", function(d) {
+        return d.description;
+    })
             .attr("r", 7)
             .attr("class", "circles")
             .style("stroke", "#B53636")
@@ -148,11 +163,14 @@ d3.json("timelineDP.json", function(data) {
 
 
             .on("click", function() {
-         eventId = d3.select(this).attr("id");
-//        alert(eventId);
+        eventId = d3.select(this).attr("id");
         d3.select("#event").transition().duration(300).attr("opacity", 0).remove();
+        d3.select("#eventImage").transition().duration(300).attr("opacity", 0).remove();
         d3.select("#closeEvent").transition().duration(300).attr("opacity", 0).remove();
         d3.select("#closeEventCircle").transition().duration(300).attr("opacity", 0).remove();
+        d3.select("#dateBox").transition().duration(300).attr("opacity", 0).remove();
+        d3.select("#date").transition().duration(300).attr("opacity", 0).remove();
+        //$('dText').parentNode.removeChild(dText); 
 
         d3.select(this)
                 .transition()
@@ -161,12 +179,22 @@ d3.json("timelineDP.json", function(data) {
                 .transition()
                 .duration(400)
                 .style("fill", "B53636")
-                .attr("r", 0);
+                .attr("r", 0)
+                ;
 
         var circleX = d3.select(this).attr("cx") - 10;
         var circleY = d3.select(this).attr("cy");
-
-
+        
+          var dLength=descriptions[eventId].length;
+          if((dLength*.75)<160)
+              {
+                  eventHeight=160;
+              }
+          else
+              {
+                eventHeight=(dLength*.75);
+              }
+          
         event = canvas.append("rect")
                 .attr("id", "event")
                 .attr("width", 20)
@@ -179,25 +207,22 @@ d3.json("timelineDP.json", function(data) {
                 .transition()
                 .duration(1000)
                 .attr("opacity", 1)
-                .attr("height", 160)
-                .attr("transform", "translate(" + (circleX) + "," + (circleY - 80) + ")")
+                .attr("height", eventHeight)
+                .attr("transform", "translate(" + (circleX) + "," + (circleY - (eventHeight/2)) + ")")
                 .transition()
                 .duration(700)
                 .attr("width", 300)
-                .attr("transform", "translate(" + (circleX - 150) + "," + (circleY - 80) + ")");
+                .attr("transform", "translate(" + (circleX - 150) + "," + (circleY - (eventHeight/2)) + ")");
 
-        /*xOut = canvas.append("rect")
-         .attr("id","xOut")
-         .attr("opacity",0)
-         .attr("height","20")
-         .attr("width","20")
-         .attr("transform","translate("+(circleX+120)+","+(circleY-70)+")");*/
-        
-        
+        dText = createSVGtext(descriptions[eventId], circleX + 10, circleY - (eventHeight/2-45)); //splits description into multiple lines
+        setTimeout(function() {$('svg').append(dText);}, 1600); //makes text appear at same time as other content
+               // alert(months[eventId]+" "+days[eventId]+", "+years[eventId]);
+
+   
         
         closeEventCircle = canvas.append("svg:image")
                 .attr("id", "closeEventCircle")
-                .attr("transform", "translate(" + (circleX + 120) + "," + (circleY - 70) + ")")
+                .attr("transform", "translate(" + (circleX + 120) + "," + (circleY - (eventHeight/2-10)) + ")")
                 .attr("opacity", 0)
                 .transition().delay(1500)
                 .attr("xlink:href", "http://i1357.photobucket.com/albums/q749/pongassist/closeEventCircle_zps820393d6.png")
@@ -211,75 +236,93 @@ d3.json("timelineDP.json", function(data) {
             d3.select(this)
                     .style("cursor", "pointer")
                     .transition().duration(500)
-                    .attr("transform", "translate(" + (circleX + 120) + "," + (circleY - 70) + ") rotate(45 10 10)");
+                    .attr("transform", "translate(" + (circleX + 120) + "," + (circleY - (eventHeight/2-10)) + ") rotate(45 10 10)");
             d3.select("#closeEventCircle")
                     .transition().duration(200)
+                    .attr("height", 22).attr("width", 22)
+                    .attr("transform", "translate(" + (circleX + 119) + "," + (circleY - (eventHeight/2-9)) + ")")
+                    .transition().duration(300)
                     .attr("height", 15).attr("width", 15)
-                    .attr("transform", "translate(" + (circleX + 122.5) + "," + (circleY - 67.5) + ")")
-                    .transition().duration(200)
-                    .attr("height", 16).attr("width", 16)
-                    .attr("transform", "translate(" + (circleX + 122) + "," + (circleY - 68) + ")")
-                    .transition().duration(100)
-                    .attr("height", 15).attr("width", 15)
-                    .attr("transform", "translate(" + (circleX + 122.5) + "," + (circleY - 67.5) + ")");
+                    .attr("transform", "translate(" + (circleX + 122.5) + "," + (circleY - (eventHeight/2-12.5)) + ")");
         })
 
                 .on("mouseout", function() {
             d3.select(this)
                     .transition().duration(500)
-                    .attr("transform", "translate(" + (circleX + 120) + "," + (circleY - 70) + ") rotate(0 10 10)");
+                    .attr("transform", "translate(" + (circleX + 120) + "," + (circleY - (eventHeight/2-10)) + ") rotate(0 10 10)");
             d3.select("#closeEventCircle")
                     .transition().duration(500)
                     .attr("height", 20).attr("width", 20)
-                    .attr("transform", "translate(" + (circleX + 120) + "," + (circleY - 70) + ")");
-        })
+                    .attr("transform", "translate(" + (circleX + 120) + "," + (circleY - (eventHeight/2-10)) + ")");
+            })
 
 
                 .on("click", function() {
             d3.select(this)
-                    .transition().duration(200)
+                    .transition().duration(200) //THIS TRANSITION IS NOT WORKING FOR SOME REASON
                     .attr("width", 0)
                     .attr("height", 0)
-                    .attr("transform", "translate(" + (circleX + 130) + "," + (circleY - 60) + ") rotate(45 0 0)");
+                    .attr("transform", "translate(" + (circleX + 130) + "," + (circleY - (eventHeight/2-20)) + ") rotate(45 0 0)");
 
             d3.select("#closeEventCircle")
-                    .transition().duration(200)
+                    .transition().duration(200) //THIS TRANSITION IS NOT WORKING FOR SOME REASON
                     .attr("height", 0).attr("width", 0)
-                    .attr("transform", "translate(" + (circleX + 130) + "," + (circleY - 60) + ")");
-            
-            d3.select("#eventImage").transition().delay(200).duration(300).attr("opacity", 0).remove();
-            d3.select("#event").transition().delay(200).duration(300).attr("opacity", 0).remove();
-            d3.select("#closeEvent").transition().delay(200).remove();
-            d3.select("#closeEventCircle").transition().delay(200).remove();
+                    .attr("transform", "translate(" + (circleX + 130) + "," + (circleY - (eventHeight/2-20)) + ")");
+
+        d3.select("#event").transition().duration(300).attr("opacity", 0).remove();
+        d3.select("#eventImage").transition().duration(300).attr("opacity", 0).remove();
+        d3.select("#closeEvent").transition().duration(300).attr("opacity", 0).remove();
+        d3.select("#closeEventCircle").transition().duration(300).attr("opacity", 0).remove();
+        d3.select("#dateBox").transition().duration(300).attr("opacity", 0).remove();
+        d3.select("#date").transition().duration(300).attr("opacity", 0).remove();
+        $('svg').removeChild(dText);
         })
                 .attr("id", "closeEvent")
-                .attr("transform", "translate(" + (circleX + 120) + "," + (circleY - 70) + ")")
+                .attr("transform", "translate(" + (circleX + 120) + "," + (circleY - (eventHeight/2-10)) + ")")
                 .attr("opacity", 0)
                 .transition().delay(1500)
                 .attr("xlink:href", "http://i1357.photobucket.com/albums/q749/pongassist/closeEvent_zpsfdfdf1e2.png")
                 .attr("opacity", 1)
                 .attr("height", "20")
                 .attr("width", "20");
-    
-            eventImage = canvas.append("svg:image")
-                .attr("id","eventImage")
-                .attr("height",140)
-                .attr("width",140)
-                .attr("transform","translate(" + (circleX - 140) + "," + (circleY - 70) + ")")
+
+        eventImage = canvas.append("svg:image")
+                .attr("id", "eventImage")
+                .attr("height", 140)//apparently only sets the height of the box containing the image: very convenient from scaling POV
+                .attr("width", 140)
+                .attr("transform", "translate(" + (circleX - 140) + "," + (circleY - 70) + ")")
                 .attr("opacity", 0)
                 .transition().delay(1500)
                 .attr("opacity", 1)
                 .attr("xlink:href", urls[eventId]);
-            })
+        
+        dateBox=canvas.append("rect")
+        .attr("id","dateBox")
+        .attr("height",22)
+        .attr("width",90)
+        .attr("rx",5)
+        .attr("ry",5)
+        .attr("stroke","black")
+       // .attr("stroke-width",1)
+        .attr("fill","grey")
+        .attr("border-radius",2)
+        .attr("transform","translate(" + (circleX - 115) + "," + (272) + ")")
+        .attr("opacity", 0)
+        .transition().delay(1500)
+        .attr("opacity",1);
+        
+        date = canvas.append("text")
+        .attr("id","date")
+        .attr("transform","translate(" + (circleX - 110) + "," + (290) + ")")
+        .attr("opacity",0)
+        .transition().delay(1500).attr("opacity",1)
+        .text(months[eventId]+"/"+days[eventId]+"/"+years[eventId])
+        .attr("font-size","20px");
 
-
-
+    })
 
             .on("mouseout", function() {
-        // alert(revert);
-        //alert(revert);
         if (revert === true) {
-            // alert("working");
             d3.select("body").selectAll("circle").transition().duration(200)
                     .attr("r", 7)
                     .style("fill", "white")
@@ -288,12 +331,9 @@ d3.json("timelineDP.json", function(data) {
     })
 
             .style('opacity', 0)
-            .transition() //transition open up new "bracket" sort of. You can't put any type of mouse event after it
+            .transition() //transition opens up new "bracket" sort of. You can't put any type of mouse event after it
             .duration(1000)
             .style('opacity', 1);
-
-
-
 
     var xAxisGroup = canvas.append("g")
 
@@ -304,27 +344,61 @@ d3.json("timelineDP.json", function(data) {
             .duration(1000)
             .attr("transform", "translate(0,170)");
 
-
-
-
-    //d3.select("line").attr("x1") -> for returning "line"'s "x1" value
-
-    /*.on("mouseenter", function(){
-     circles.transition()
-     .duration(1500)
-     //.delay(1000)
-     .style('opacity',.7)
-     .attr("cx", function(d){return d.month * 50;})
-     //.each("end",function(){}) //this is a listener -- "start" can also be used instead of "end"
-     .transition()
-     .style('opacity',0)
-     .attr("cy",function(d){return d.year / 10;});});*/
-
-
-
-
-
 });
+
+
+//Following code taken from Mike Gledhill (http://www.MikesKnowledgeBase.com)
+//splits timeline descriptions into multiple lines
+
+function createSVGtext(caption, x, y) {
+    //  This function attempts to create a new svg "text" element, chopping 
+    //  it up into "tspan" pieces, if the caption is too long
+    //
+     svgText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    svgText.setAttributeNS(null, 'x', x);
+    svgText.setAttributeNS(null, 'y', y);
+    svgText.setAttributeNS(null, 'font-size', 12);
+    svgText.setAttributeNS(null, 'fill', '#000000');         //  White text
+    svgText.setAttributeNS(null, 'text-anchor', 'start');   //  Center the text
+
+    //  The following two variables should really be passed as parameters
+    var MAXIMUM_CHARS_PER_LINE = 28;
+    var LINE_HEIGHT = 16;
+
+    var words = caption.split(" ");
+    var line = "";
+
+    for (var n = 0; n < words.length; n++) {
+        var testLine = line + words[n] + " ";
+        if (testLine.length > MAXIMUM_CHARS_PER_LINE)
+        {
+            //  Add a new <tspan> element
+            var svgTSpan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+            svgTSpan.setAttributeNS(null, 'x', x);
+            svgTSpan.setAttributeNS(null, 'y', y);
+
+            var tSpanTextNode = document.createTextNode(line);
+            svgTSpan.appendChild(tSpanTextNode);
+            svgText.appendChild(svgTSpan);
+
+            line = words[n] + " ";
+            y += LINE_HEIGHT;
+        }
+        else {
+            line = testLine;
+        }
+    }
+
+    var svgTSpan = document.createElementNS('http://www.w3.org/2000/svg', 'tspan');
+    svgTSpan.setAttributeNS(null, 'x', x);
+    svgTSpan.setAttributeNS(null, 'y', y);
+
+    var tSpanTextNode = document.createTextNode(line);
+    svgTSpan.appendChild(tSpanTextNode);
+
+    svgText.appendChild(svgTSpan);
+    return svgText;
+}
 
 
 
