@@ -1,3 +1,9 @@
 [
-    {"images": "yes", "text": "yes"}
+    {"title":"Sheldon Hackney: Free Speech and Racial Controversy", 
+    "title_size":"22px",
+    "title_color":"black",
+    "background_color":"#DBDBDB",
+    "timeline_color":"black",
+    "images": "yes", 
+    "text": "yes"}
 ]
