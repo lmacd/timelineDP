@@ -1,13 +1,24 @@
 [
-  {"event_number":0,"year":  1922, "month": 1, "day":2, "description":"Lorem ipsum dolor sit amet Lorem ipsum dolor sit ametLorem ipsum dolor sit amet etc.",
-      "image_height":140,"image_width":140,"image_url":"http://www.sidebarnation.com/.a/6a00e54f0984ee8834017d3ecd8ce6970c-800wi"},
-  
-  {"event_number":1,"year":  1965, "month": 4, "day": 22, "description":"working",
+  {"event_number":0,"year":  1985, "month": 0, "day":0, "description":"Then-Wharton lecturer Murray Dolfman refers to a group of black students in his constitutional law class as 'ex-slaves,' asking one student to stand up and recite the 13th Amendment, the passage of which in 1865 had abolished slavery. Dolfman was eventually suspended for one semester, though Hackney faced criticism for not playing a more active role in the instructor's discipline.",
+
       "image_height":140,"image_width":140,"image_url":"https://lh3.googleusercontent.com/-E2QBgJhxbb8/AAAAAAAAAAI/AAAAAAAAAAA/uAe9W_e7Y-Q/s600-c-k-no/photo.jpg"},
   
-  {"event_number":2,"year":  1988, "month": 6, "day":17, "description":"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-      "image_height":140,"image_width":140,"image_url":"http://m7.i.pbase.com/o4/82/590082/1/54477737.DSC_1140.jpg"},
+  {"event_number":1,"year":  1988, "month": 0, "day": 0, "description":"Nation of Islam leader Louis Farrakhan, known for his anti-white and anti-Semitic views, is invited to speak on campus by several student groups. Farrakhan's appearance prompted heated discourse among students, but Hackney stood firm in his belief that Farrakhan deserved an opportunity to speak.",
+      "image_height":140,"image_width":140,"image_url":"https://lh3.googleusercontent.com/-E2QBgJhxbb8/AAAAAAAAAAI/AAAAAAAAAAA/uAe9W_e7Y-Q/s600-c-k-no/photo.jpg"},
   
-  {"event_number":3,"year":  2006, "month": 7, "day":12, "description":"Lorem ipsum dolor sit amet etc.",
-      "image_height":140,"image_width":140,"image_url":"http://upload.wikimedia.org/wikipedia/commons/2/25/Ben_Franklin_sculpture_(University_of_Pennsylvania).JPG"}
-  ]
+  {"event_number":2,"year":  1991, "month": 0, "day":0, "description":"Hackney announces revisions to Penn's racial harassment speech code, making it against University Policy to 'insult or demean' fellow students on the basis of their race or ethnicity.",
+
+      "image_height":140,"image_width":140,"image_url":"http://i1357.photobucket.com/albums/q749/pongassist/racialHarassment_zps0f5b922a.jpg"},
+  
+  {"event_number":3,"year":  1992, "month": 0, "day":0, "description":"Hackney plays a central role in quelling campus riots that sprung up after the Rodney King verdict, a case in which four Los Angeles police officers were acquitted of charges that they had used excessive force while arresting King, a black man.",
+
+        "image_height":140,"image_width":140,"image_url":"http://i1357.photobucket.com/albums/q749/pongassist/rodneyKing_zps756d653e.jpg"},
+  
+  {"event_number":4,"year":  1993, "month": 1, "day":0, "description":"Eden Jacobowitz, a then-College freshman, shouts, 'Shut up, you water buffalo!' at a group of black sorority sisters who were making noise outside of his high-rise apartment. The judicial proceedings that stemmed from Jacobowitz's actions would soon come to be known as Penn's infamous water buffalo affair.",
+
+        "image_height":140,"image_width":140,"image_url":"http://i1357.photobucket.com/albums/q749/pongassist/separationAnxiety_zps1003f06c.jpg"},
+  
+  {"event_number":5,"year":  1993, "month": 4, "day":0, "description":"Nearly 14,000 copies of The Daily Pennsylvanian--an entire press run--are stolen by members of the 'Black Community.'",
+
+        "image_height":140,"image_width":140,"image_url":"http://i1357.photobucket.com/albums/q749/pongassist/dpStolen_zpse758f585.jpg"}
+ ]
