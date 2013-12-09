@@ -1,4 +1,9 @@
 
+body
+{
+    position:fixed;
+}
+
 #event
 {
 background-color:red;    
@@ -8,4 +13,6 @@ background-color:red;
 {
     cursor:pointer;
 }
+
+
 
