@@ -11,14 +11,12 @@ d3.json("timelineDP.json", function(data) {
     var closeEvent;
     var closeEventCircle;
     var eventImage;
-    var eventDescription;
     var dText;
     var date;
     var dateBox;
     var eventId;
     var eventHeight=300;
     var descriptionText;
-    var dLength;
 
 
 
@@ -170,8 +168,8 @@ d3.json("timelineDP.json", function(data) {
         d3.select("#closeEventCircle").transition().duration(300).attr("opacity", 0).remove();
         d3.select("#dateBox").transition().duration(300).attr("opacity", 0).remove();
         d3.select("#date").transition().duration(300).attr("opacity", 0).remove();
-        //$('dText').parentNode.removeChild(dText); 
-
+        $('descriptionText').remove();
+        
         d3.select(this)
                 .transition()
                 .duration(200)
@@ -215,7 +213,8 @@ d3.json("timelineDP.json", function(data) {
                 .attr("transform", "translate(" + (circleX - 150) + "," + (circleY - (eventHeight/2)) + ")");
 
         dText = createSVGtext(descriptions[eventId], circleX + 10, circleY - (eventHeight/2-45)); //splits description into multiple lines
-        setTimeout(function() {$('svg').append(dText);}, 1600); //makes text appear at same time as other content
+    //   descriptionText=d3.select('event').append('dText');
+  setTimeout(function() {descriptionText=$('svg').append(dText);}, 1600); //makes text appear at same time as other content
                // alert(months[eventId]+" "+days[eventId]+", "+years[eventId]);
 
    
@@ -275,8 +274,8 @@ d3.json("timelineDP.json", function(data) {
         d3.select("#closeEventCircle").transition().duration(300).attr("opacity", 0).remove();
         d3.select("#dateBox").transition().duration(300).attr("opacity", 0).remove();
         d3.select("#date").transition().duration(300).attr("opacity", 0).remove();
-        $('svg').removeChild(dText);
-        })
+        $('descriptionText').remove();
+                })
                 .attr("id", "closeEvent")
                 .attr("transform", "translate(" + (circleX + 120) + "," + (circleY - (eventHeight/2-10)) + ")")
                 .attr("opacity", 0)
@@ -358,12 +357,12 @@ function createSVGtext(caption, x, y) {
     svgText.setAttributeNS(null, 'x', x);
     svgText.setAttributeNS(null, 'y', y);
     svgText.setAttributeNS(null, 'font-size', 12);
-    svgText.setAttributeNS(null, 'fill', '#000000');         //  White text
-    svgText.setAttributeNS(null, 'text-anchor', 'start');   //  Center the text
+    svgText.setAttributeNS(null, 'fill', '#000000');         //  black text
+    svgText.setAttributeNS(null, 'text-anchor', 'start');   //  left-align the text
 
     //  The following two variables should really be passed as parameters
     var MAXIMUM_CHARS_PER_LINE = 28;
-    var LINE_HEIGHT = 16;
+    var LINE_HEIGHT = 13;
 
     var words = caption.split(" ");
     var line = "";
