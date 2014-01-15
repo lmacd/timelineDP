@@ -1,8 +1,5 @@
-d3.json("timelineSettings.json", function(data1) {
-    d3.json("timelineDP.json", function(data2) {
-
-
-
+d3.json("timelineSettings.json", function(data1) { //data1 is the timeline settings
+    d3.json("timelineDP.json", function(data2) { //data2 is the timeline contents
 
         var event;
         var closeEvent;
@@ -15,8 +12,7 @@ d3.json("timelineSettings.json", function(data1) {
         var eventHeight = 300;
         var eventOffset = 150;
         var dy;
-
-
+        var i = 0; //counter for computing true months
 
         var dataL = data2.length; //returns number of timeline events
 
@@ -27,14 +23,14 @@ d3.json("timelineSettings.json", function(data1) {
             return d.description;
         }); //creates array of event descriptions
 
-
-
         var years = data2.map(function(d) {
             return d.year;
         }); //creates new array of only years
         var months = data2.map(function(d) {
             return d.month;
         }); //creates new array of only months
+
+
         var days = data2.map(function(d) {
             return d.day;
         }); //creates new array of only days
@@ -42,14 +38,28 @@ d3.json("timelineSettings.json", function(data1) {
         var startingYear = d3.min(years); //first year in timeline
         var endingYear = d3.max(years); //last year in timeline
 
-        var startingMonth = d3.min(months); //first month in timeline 
-        var endingMonth = d3.max(months); //last month in timeline
-
+       
         var startingDay = d3.min(days); //first day in timeline
         var endingDay = d3.max(days); //last day in timeline
 
+        while (i < dataL)
+        {
+
+            if ((years[i] - startingYear) > 0) //converts months array to # of total months since starting date
+            {
+                months[i] = months[i] + (years[i] - startingYear) * 12;
+                
+            }
+            i++;
+        }
+
+        var startingMonth = d3.min(months); //first month in timeline 
+        var endingMonth = d3.max(months); //last month in timeline
+
+
         var ySpan = endingYear - startingYear; //returns span of years accross events
         var mSpan = endingMonth - startingMonth; //returns span of months accross events
+        //alert(mSpan);
         var dSpan = endingDay - startingDay; //returns span of days accross events
 
         var startingPoint; //these values will depend on the data scaling
@@ -60,7 +70,7 @@ d3.json("timelineSettings.json", function(data1) {
 
         if (ySpan <= 1) //if the events all occurred within two years
         {
-            if (mSpan <= 1)//if all the events occured within two months
+            if (mSpan < 1)//if all the events occured within one month
             {
                 startingPoint = startingDay;
                 endingPoint = endingDay;
@@ -68,7 +78,6 @@ d3.json("timelineSettings.json", function(data1) {
             }
             else if (mSpan > 1)//if the events took place over several months
             {
-                alert("working");
                 startingPoint = startingMonth;
                 endingPoint = endingMonth;
                 scale = months;
@@ -82,7 +91,7 @@ d3.json("timelineSettings.json", function(data1) {
         }
 
 
-        var linearScale = d3.scale.linear()
+        var linearScale = d3.scale.linear() //calibrates dates to pixel values within visual timeline size
                 .domain([startingPoint, endingPoint])
                 .range([37, 563]);
 
@@ -98,21 +107,24 @@ d3.json("timelineSettings.json", function(data1) {
                 .orient("bottom")
                 .tickFormat(d3.format(Number.toPrecision));
 
-
-
         var canvas = d3.select("body")
                 .append("svg")
                 .attr("width", 600)
                 .attr("height", 450)
                 .attr("id", "canvas")
-                .style("position", "fixed");
+                .style("position", "fixed")
+                ;
 
         var viewbox = canvas.append("rect")
                 .data(data1)
+                .attr("id", "viewbox")
                 .attr("height", 450)
                 .attr("width", 600)
                 .style("fill", function(d) {
             return d.background_color;
+        })
+                .on("click", function() {
+            close();
         })
                 .attr("position", "fixed");
 
@@ -134,13 +146,13 @@ d3.json("timelineSettings.json", function(data1) {
             return d.title_size;
         });
 
-
-
-
         var timeline = canvas.append("rect")
                 .data(data1)
                 .attr("width", 550)
                 .attr("height", 60)
+                .on("click", function() {
+            close();
+        })
                 .style("fill", function(d) {
             return d.timeline_color;
         })
@@ -148,7 +160,6 @@ d3.json("timelineSettings.json", function(data1) {
                 .attr("ry", 10)
                 .attr("y", "195")
                 .attr("x", "25");
-
 
         var circles = canvas.selectAll("circle")
                 .data(dataScale)
@@ -179,18 +190,9 @@ d3.json("timelineSettings.json", function(data1) {
                     .style("cursor", "pointer");
 
         })
-
-
-
                 .on("click", function() {
             eventId = d3.select(this).attr("id");
-            d3.select("#event").transition().duration(300).attr("opacity", 0).remove();
-            d3.select("#eventImage").transition().duration(300).attr("opacity", 0).remove();
-            d3.select("#closeEvent").transition().duration(300).attr("opacity", 0).remove();
-            d3.select("#closeEventCircle").transition().duration(300).attr("opacity", 0).remove();
-            d3.select("#dateBox").transition().duration(300).attr("opacity", 0).remove();
-            d3.select("#date").transition().duration(300).attr("opacity", 0).remove();
-            $('#dText').remove();
+            close();
 
             d3.select(this)
                     .transition()
@@ -208,10 +210,10 @@ d3.json("timelineSettings.json", function(data1) {
             {
                 eventOffset = 150 + circleX - 440;
             }
-            else if((circleX-160)<0)
-                {
-                    eventOffset=150+circleX-160;
-                }
+            else if ((circleX - 160) < 0)
+            {
+                eventOffset = 150 + circleX - 160;
+            }
             else
             {
                 eventOffset = 150;
@@ -304,14 +306,7 @@ d3.json("timelineSettings.json", function(data1) {
                         .transition().duration(200) //THIS TRANSITION IS NOT WORKING FOR SOME REASON
                         .attr("height", 0).attr("width", 0)
                         .attr("transform", "translate(" + (circleX - eventOffset + 280) + "," + (circleY - (eventHeight / 2 - 20)) + ")");
-
-                d3.select("#event").transition().duration(300).attr("opacity", 0).remove();
-                d3.select("#eventImage").transition().duration(300).attr("opacity", 0).remove();
-                d3.select("#closeEvent").transition().duration(300).attr("opacity", 0).remove();
-                d3.select("#closeEventCircle").transition().duration(300).attr("opacity", 0).remove();
-                d3.select("#dateBox").transition().duration(300).attr("opacity", 0).remove();
-                d3.select("#date").transition().duration(300).attr("opacity", 0).remove();
-                $('#dText').remove();
+                close();
             })
                     .attr("id", "closeEvent")
                     .attr("transform", "translate(" + (circleX - eventOffset + 270) + "," + (circleY - (eventHeight / 2 - 10)) + ")")
@@ -384,9 +379,21 @@ d3.json("timelineSettings.json", function(data1) {
 });
 
 
-//Following code taken from Mike Gledhill (http://www.MikesKnowledgeBase.com)
-//splits timeline descriptions into multiple lines
+//
 
+//*************************** CLOSES TIMELINE EVENTS ***************************
+function close() {
+    d3.selectAll("#event, #eventImage, #closeEvent, #closeEventCircle, #dateBox, #date")
+            .transition().duration(300).attr("opacity", 0).remove();
+    setTimeout(function() {
+        $('#dText').remove();
+    }, 100);
+}
+
+
+//*************************** CREATES TEXT WRAPPING ****************************
+
+//Following code taken from Mike Gledhill (http://www.MikesKnowledgeBase.com)
 function createSVGtext(caption, x, y) {
     //  This function attempts to create a new svg "text" element, chopping 
     //  it up into "tspan" pieces, if the caption is too long
