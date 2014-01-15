@@ -14,98 +14,24 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
         var dy;
         var i = 0; //counter for computing true months
 
-        var dataL = data2.length; //returns number of timeline events
+var dates = data2.map(function(d){return d.eDate;});
 
-        var urls = data2.map(function(d) {
+var urls = data2.map(function(d) {
             return d.image_url;
         }); //creates array of image urls
         var descriptions = data2.map(function(d) {
             return d.description;
         }); //creates array of event descriptions
 
-        var years = data2.map(function(d) {
-            return d.year;
-        }); //creates new array of only years
-        var months = data2.map(function(d) {
-            return d.month;
-        }); //creates new array of only months
+        var dataL = data2.length; //returns number of timeline events
 
+        var minDate = getDate(data2[0]);
+        var maxDate = getDate(data2[data2.length - 1]);
 
-        var days = data2.map(function(d) {
-            return d.day;
-        }); //creates new array of only days
-
-        var startingYear = d3.min(years); //first year in timeline
-        var endingYear = d3.max(years); //last year in timeline
-
-       
-        var startingDay = d3.min(days); //first day in timeline
-        var endingDay = d3.max(days); //last day in timeline
-
-        while (i < dataL)
-        {
-
-            if ((years[i] - startingYear) > 0) //converts months array to # of total months since starting date
-            {
-                months[i] = months[i] + (years[i] - startingYear) * 12;
-                
-            }
-            i++;
-        }
-
-        var startingMonth = d3.min(months); //first month in timeline 
-        var endingMonth = d3.max(months); //last month in timeline
-
-
-        var ySpan = endingYear - startingYear; //returns span of years accross events
-        var mSpan = endingMonth - startingMonth; //returns span of months accross events
-        //alert(mSpan);
-        var dSpan = endingDay - startingDay; //returns span of days accross events
-
-        var startingPoint; //these values will depend on the data scaling
-        var endingPoint;
-        var scale; //the scale you end up having (years, months, or days)]]
+        var x = d3.time.scale().domain([minDate, maxDate]).range([40, 560]);
 
         var revert = true;
 
-        if (ySpan <= 1) //if the events all occurred within two years
-        {
-            if (mSpan < 1)//if all the events occured within one month
-            {
-                startingPoint = startingDay;
-                endingPoint = endingDay;
-                scale = days;
-            }
-            else if (mSpan > 1)//if the events took place over several months
-            {
-                startingPoint = startingMonth;
-                endingPoint = endingMonth;
-                scale = months;
-            }
-        }
-        else if (ySpan > 1)
-        {
-            startingPoint = startingYear;
-            endingPoint = endingYear;
-            scale = years;
-        }
-
-
-        var linearScale = d3.scale.linear() //calibrates dates to pixel values within visual timeline size
-                .domain([startingPoint, endingPoint])
-                .range([37, 563]);
-
-        var dataScale = []; //stores the calibrated sizes
-
-
-        for (var i = 0; i < dataL; i++) {
-            dataScale[i] = linearScale(scale[i]);
-        }
-
-        var xAxis = d3.svg.axis()
-                .scale(linearScale)
-                .orient("bottom")
-                .tickFormat(d3.format(Number.toPrecision));
 
         var canvas = d3.select("body")
                 .append("svg")
@@ -161,13 +87,69 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                 .attr("y", "195")
                 .attr("x", "25");
 
+        var ticks = canvas.selectAll("g") //creates group at each specified date
+                .data(x.ticks(5))
+                .enter().append("svg:g");
+
+
+
+        ticks.append("svg:text")
+                .attr("x", x)
+                .attr("y", 180)
+                .attr("dy", "10px")
+                .attr("text-anchor", "middle")
+                .text(x.tickFormat(10))
+                .attr("transform","translate("+0+","+20+")")
+                .transition()
+                .duration(600)
+                .attr("transform","translate("+0+","+0+")");
+
+
+        ticks.append("svg:line")
+                .attr("x1", x)
+                .attr("x2", x)
+                .attr("y1", 206)
+                .attr("y2", 242)
+                .attr("stroke", "white")
+                .attr("stroke-width", "1px")
+                .style('opacity', 0)
+                .transition()
+                .duration(1000)
+                .style('opacity', 1);
+                
+
+        
+         ticks.append("svg:line")
+                .attr("x1", x)
+                .attr("x2", x)
+                .attr("y1", 173)
+                .attr("y2", 176)
+                .attr("stroke", "black")
+                .attr("stroke-width", "6px")
+                .attr("transform","translate("+0+","+20+")")
+                .transition()
+                .duration(600)
+                .attr("transform","translate("+0+","+0+")");
+
+        canvas.append("svg:line")
+                .attr("x1", 45)
+                .attr("x2", 555)
+                .attr("y1", 173)
+                .attr("y2", 173)
+                .attr("stroke", "black")
+                .attr("stroke-width", "4px")
+                .attr("transform","translate("+0+","+20+")")
+                .transition()
+                .duration(600)
+                .attr("transform","translate("+0+","+0+")");
+
         var circles = canvas.selectAll("circle")
-                .data(dataScale)
+                .data(data2)
                 .enter()
                 .append("circle")
                 .attr("cy", 225)
                 .attr("cx", function(d) {
-            return d;
+            return x(getDate(d));
         })
                 .data(data2)
                 .attr("id", function(d) {
@@ -347,7 +329,7 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                     .attr("transform", "translate(" + (circleX - eventOffset + 40) + "," + (290) + ")")
                     .attr("opacity", 0)
                     .transition().delay(1500).attr("opacity", 1)
-                    .text(months[eventId] + "/" + days[eventId] + "/" + years[eventId])
+                    .text(dates[eventId])
                     .attr("font-size", "20px");
 
         })
@@ -380,6 +362,10 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
 
 
 //
+function getDate(d) {
+    return new Date(d.eDate);
+}
+
 
 //*************************** CLOSES TIMELINE EVENTS ***************************
 function close() {
