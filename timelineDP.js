@@ -371,8 +371,8 @@ var backgroundImage = canvas.append("svg:image")
                     .attr("r", 0)
                     ;
 
-            circleX = d3.select(target).attr("cx") - 10;
-            circleY = d3.select(target).attr("cy");
+            circleX = parseInt(d3.select(target).attr("cx")) - 10;
+            circleY = parseInt(d3.select(target).attr("cy"));
             if ((600 - circleX) < 160)
             {
                 eventOffset = 150 + circleX - 440;
@@ -487,11 +487,10 @@ var backgroundImage = canvas.append("svg:image")
                     .attr("rx", 5)
                     .attr("ry", 5)
                     .attr("stroke", "black")
-                    // .attr("stroke-width",1)
                     .attr("fill", "grey")
                     .attr("border-radius", 2)
                     .attr("transform", "translate(" + (circleX - eventOffset + 30)
-                    + "," + (yPosition+47) + ")")
+                    + "," + (circleY+48) + ")")
                     .attr("opacity", 0)
                     .transition().delay(1500)
                     .attr("opacity", 1);
@@ -499,7 +498,7 @@ var backgroundImage = canvas.append("svg:image")
             date = canvas.append("text")
                     .attr("id", "date")
                     .attr("transform", "translate(" + (circleX - eventOffset + 35)
-                    + "," + (yPosition+65) + ")")
+                    + "," + (circleY+66) + ")")
                     .attr("opacity", 0)
                     .transition().delay(1500).attr("opacity", 1)
                     .text(dates[eventId])
