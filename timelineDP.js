@@ -21,6 +21,12 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
         var xPosition;
         var removed = false;
         var remove;
+        var yPosition =  parseInt(data1.map(function(d){return d.timeline_position;}));
+        var titlePosition = parseInt(data1.map(function(d){return d.title_position;}));
+        var imageX = parseInt(data1.map(function(d){return d.imageX;}));
+        var imageY = parseInt(data1.map(function(d){return d.imageY;}));
+
+
 
         var dates = data2.map(function(d) {
             return d.eDate;
@@ -55,6 +61,8 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                 .style("position", "fixed")
                 ;
 
+        
+
         var viewbox = canvas.append("rect")
                 .data(data1)
                 .attr("id", "viewbox")
@@ -68,6 +76,15 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
         })
                 .attr("position", "fixed");
 
+var backgroundImage = canvas.append("svg:image")
+                    .data(data1)
+                    .attr("id", "backgroundImage")
+                    .attr("transform", "translate(" + (imageX) + "," + (imageY) + ")")
+                    .attr("xlink:href", function(d){return d.backgroundImageURL;
+                    })
+                    .attr("height",function(d){return d.imageSize;})
+                    .attr("width",function(d){return d.imageSize;});
+
         var title = canvas.append("text")
                 .data(data1)
                 .text(function(d) {
@@ -75,7 +92,7 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
         })
                 .attr("text-anchor", "middle")
                 .attr("x", 300)
-                .attr("y", 60)
+                .attr("y", titlePosition)
                 .attr("id", "title")
                 .attr("fill", function(d) {
             return d.title_color;
@@ -91,8 +108,8 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                 .attr("width", 550)
                 .attr("height", 60)
                 .on("mouseover", function() {
-            d3.select(".dCircle1").transition().attr("cy", 225).remove();
-            d3.select(".dCircle2").transition().attr("cy", 225).remove();
+            d3.select(".dCircle1").transition().attr("cy", yPosition).remove();
+            d3.select(".dCircle2").transition().attr("cy", yPosition).remove();
             doubleEvent();
 
         })
@@ -104,18 +121,16 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
         })
                 .attr("rx", 10)
                 .attr("ry", 10)
-                .attr("y", "195")
+                .attr("y", yPosition-30)
                 .attr("x", "25");
 
         var ticks = canvas.selectAll("g") //creates group at each specified date
                 .data(x.ticks(5))
                 .enter().append("svg:g");
 
-
-
         ticks.append("svg:text")
                 .attr("x", x)
-                .attr("y", 180)
+                .attr("y", yPosition-45)
                 .attr("dy", "10px")
                 .attr("text-anchor", "middle")
                 .text(x.tickFormat(10))
@@ -124,12 +139,11 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                 .duration(600)
                 .attr("transform", "translate(" + 0 + "," + 0 + ")");
 
-
         ticks.append("svg:line")
                 .attr("x1", x)
                 .attr("x2", x)
-                .attr("y1", 206)
-                .attr("y2", 242)
+                .attr("y1", yPosition-19)
+                .attr("y2", yPosition+17)
                 .attr("stroke", "#404040")
                 .attr("stroke-width", "1px")
                 .style('opacity', 0)
@@ -142,8 +156,8 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
         ticks.append("svg:line")
                 .attr("x1", x)
                 .attr("x2", x)
-                .attr("y1", 173)
-                .attr("y2", 176)
+                .attr("y1", yPosition-52)
+                .attr("y2", yPosition-49)
                 .attr("stroke", "black")
                 .attr("stroke-width", "6px")
                 .attr("transform", "translate(" + 0 + "," + 20 + ")")
@@ -154,8 +168,8 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
         canvas.append("svg:line")
                 .attr("x1", 45)
                 .attr("x2", 555)
-                .attr("y1", 173)
-                .attr("y2", 173)
+                .attr("y1", yPosition-52)
+                .attr("y2", yPosition-52)
                 .attr("stroke", "black")
                 .attr("stroke-width", "4px")
                 .attr("transform", "translate(" + 0 + "," + 20 + ")")
@@ -167,7 +181,7 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                 .data(data2)
                 .enter()
                 .append("circle")
-                .attr("cy", 225)
+                .attr("cy", yPosition)
                 .attr("cx", function(d) {
             return x(getDate(d));
         })
@@ -243,7 +257,7 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
 //******************* CREATES CIRCLE FOR DOUBLE EVENT **************************
         function doubleEvent() {
             canvas.append("circle")
-                    .attr("cy", 225)
+                    .attr("cy", yPosition)
                     .attr("cx", xPosition)
                     .attr("r", 7)
                     .attr("class", "doubleCircle")
@@ -259,7 +273,7 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                     .style('opacity', 1);
 
             canvas.append("text")
-                    .attr("y", 229)
+                    .attr("y", yPosition+4)
                     .attr("x", xPosition)
                     .style("font-size", "12px")
                     .style("font-weight", "bold")
@@ -280,15 +294,15 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                         .attr("height", 50)
                         .attr("width", 20)
                         .attr("x", xPosition - 10)
-                        .attr("y", 199)
+                        .attr("y", yPosition-26)
                         .style("fill", "black");
 
 
                 d3.select(target).transition()
-                        .attr("cy", 240).remove();
+                        .attr("cy", yPosition+15).remove();
 
                 canvas.append("circle")
-                        .attr("cy", 240)
+                        .attr("cy", yPosition+15)
                         .attr("cx", xPosition)
                         .attr("id", remove)
                         .attr("r", 7)
@@ -308,7 +322,7 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                         .attr("opacity", 0).transition().delay(100).attr("opacity", 1);
 
                 canvas.append("circle")
-                        .attr("cy", 225)
+                        .attr("cy", yPosition)
                         .attr("cx", xPosition)
                         .attr("id", remove)
                         .attr("r", 7)
@@ -317,11 +331,11 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                         .style("stroke-width", 2)
                         .style("fill", "white")
                         .transition()
-                        .attr("cy", 210)
+                        .attr("cy", yPosition-15)
                         .remove();
 
                 canvas.append("circle")
-                        .attr("cy", 210)
+                        .attr("cy", yPosition-15)
                         .attr("cx", xPosition)
                         .attr("id", (remove + 1))
                         .attr("r", 7)
@@ -477,7 +491,7 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                     .attr("fill", "grey")
                     .attr("border-radius", 2)
                     .attr("transform", "translate(" + (circleX - eventOffset + 30)
-                    + "," + (272) + ")")
+                    + "," + (yPosition+47) + ")")
                     .attr("opacity", 0)
                     .transition().delay(1500)
                     .attr("opacity", 1);
@@ -485,7 +499,7 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
             date = canvas.append("text")
                     .attr("id", "date")
                     .attr("transform", "translate(" + (circleX - eventOffset + 35)
-                    + "," + (290) + ")")
+                    + "," + (yPosition+65) + ")")
                     .attr("opacity", 0)
                     .transition().delay(1500).attr("opacity", 1)
                     .text(dates[eventId])

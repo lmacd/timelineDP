@@ -4,6 +4,12 @@
     "title_color":"black",
     "background_color":"#DBDBDB",
     "timeline_color":"black",
-    "images": "yes", 
+    "timeline_position":325,
+    "title_position":215,
+    "backgroundImageURL":"http://media.dpn.s3.amazonaws.com/29961_hackneyoldforwebf.jpg",
+    "imageX":165,
+    "imageY":-20,
+    "imageSize":250,
+    "images": "yes",
     "text": "yes"}
 ]
