@@ -1,25 +1,31 @@
 [
-  {"event_number":0,"eDate":  "03/01/1984", "description":"Then-Wharton lecturer Murray Dolfman refers to a group of black students in his constitutional law class as 'ex-slaves,' asking one student to stand up and recite the 13th Amendment, the passage of which in 1865 had abolished slavery. Dolfman was eventually suspended for one semester, though Hackney faced criticism for not playing a more active role in the instructor's discipline.",
-
+  {"event_number":0,"eDate":  "03/01/1984", 
+      "title":"Lecture Controversy",
+      "description":"Then-Wharton lecturer Murray Dolfman refers to a group of black students in his constitutional law class as 'ex-slaves,' asking one student to stand up and recite the 13th Amendment, the passage of which in 1865 had abolished slavery. Dolfman was eventually suspended for one semester, though Hackney faced criticism for not playing a more active role in the instructor's discipline.",
       "image_url":"https://lh3.googleusercontent.com/-E2QBgJhxbb8/AAAAAAAAAAI/AAAAAAAAAAA/uAe9W_e7Y-Q/s600-c-k-no/photo.jpg"},
   
-  {"event_number":1,"eDate":  "05/14/1984", "description":"Nation of Islam leader Louis Farrakhan, known for his anti-white and anti-Semitic views, is invited to speak on campus by several student groups. Farrakhan's appearance prompted heated discourse among students, but Hackney stood firm in his belief that Farrakhan deserved an opportunity to speak.",
-      
+  {"event_number":1,"eDate":  "05/14/1984", 
+      "title":"Louis Farrakhan Visit",
+      "description":"Nation of Islam leader Louis Farrakhan, known for his anti-white and anti-Semitic views, is invited to speak on campus by several student groups. Farrakhan's appearance prompted heated discourse among students, but Hackney stood firm in his belief that Farrakhan deserved an opportunity to speak.",      
       "image_url":"https://lh3.googleusercontent.com/-E2QBgJhxbb8/AAAAAAAAAAI/AAAAAAAAAAA/uAe9W_e7Y-Q/s600-c-k-no/photo.jpg"},
   
-  {"event_number":2,"eDate":  "11/22/1984", "description":"Hackney announces revisions to Penn's racial harassment speech code, making it against University Policy to 'insult or demean' fellow students on the basis of their race or ethnicity.",
-
+  {"event_number":2,"eDate":  "11/22/1984", 
+      "title":"Racial Harassment Code Changes",
+      "description":"Hackney announces revisions to Penn's racial harassment speech code, making it against University Policy to 'insult or demean' fellow students on the basis of their race or ethnicity.",
       "image_url":"http://i1357.photobucket.com/albums/q749/pongassist/racialHarassment_zps0f5b922a.jpg"},
   
-  {"event_number":3,"eDate":  "02/07/1985","description":"Hackney plays a central role in quelling campus riots that sprung up after the Rodney King verdict, a case in which four Los Angeles police officers were acquitted of charges that they had used excessive force while arresting King, a black man.",
-
+  {"event_number":3,"eDate":  "02/07/1985",
+      "title":"Rodney King Riots",
+      "description":"Hackney plays a central role in quelling campus riots that sprung up after the Rodney King verdict, a case in which four Los Angeles police officers were acquitted of charges that they had used excessive force while arresting King, a black man.",
       "image_url":"http://i1357.photobucket.com/albums/q749/pongassist/rodneyKing_zps756d653e.jpg"},
   
-  {"event_number":4,"eDate":  "08/15/1985", "description":"Eden Jacobowitz, a then-College freshman, shouts, 'Shut up, you water buffalo!' at a group of black sorority sisters who were making noise outside of his high-rise apartment. The judicial proceedings that stemmed from Jacobowitz's actions would soon come to be known as Penn's infamous water buffalo affair.",
-
+  {"event_number":4,"eDate":  "08/15/1985", 
+      "title":"Water Buffalo Affair",
+      "description":"Eden Jacobowitz, a then-College freshman, shouts, 'Shut up, you water buffalo!' at a group of black sorority sisters who were making noise outside of his high-rise apartment. The judicial proceedings that stemmed from Jacobowitz's actions would soon come to be known as Penn's infamous water buffalo affair.",
       "image_url":"http://i1357.photobucket.com/albums/q749/pongassist/separationAnxiety_zps1003f06c.jpg"},
   
-  {"event_number":5,"eDate":  "10/28/1985", "description":"Nearly 14,000 copies of The Daily Pennsylvanian--an entire press run--are stolen by members of the 'Black Community.'",
-
+  {"event_number":5,"eDate":  "08/18/1985", 
+      "title":"DP Press Run Stolen",
+      "description":"Nearly 14,000 copies of The Daily Pennsylvanian--an entire press run--are stolen by members of the 'Black Community.'",
       "image_url":"http://i1357.photobucket.com/albums/q749/pongassist/dpStolen_zpse758f585.jpg"}
  ]

@@ -12,11 +12,22 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
         var eventHeight = 300;
         var eventOffset = 150;
         var dy;
+        var j=0;
         var i = 0; //counter for computing true months
+        var circleY;
+        var currentX;
+        var lastX=0;
+        var remove;
 
-var dates = data2.map(function(d){return d.eDate;});
+        var dates = data2.map(function(d) {
+            return d.eDate;
+        });
 
-var urls = data2.map(function(d) {
+        var titles = data2.map(function(d) {
+            return d.title;
+        });
+
+        var urls = data2.map(function(d) {
             return d.image_url;
         }); //creates array of image urls
         var descriptions = data2.map(function(d) {
@@ -99,10 +110,10 @@ var urls = data2.map(function(d) {
                 .attr("dy", "10px")
                 .attr("text-anchor", "middle")
                 .text(x.tickFormat(10))
-                .attr("transform","translate("+0+","+20+")")
+                .attr("transform", "translate(" + 0 + "," + 20 + ")")
                 .transition()
                 .duration(600)
-                .attr("transform","translate("+0+","+0+")");
+                .attr("transform", "translate(" + 0 + "," + 0 + ")");
 
 
         ticks.append("svg:line")
@@ -110,26 +121,26 @@ var urls = data2.map(function(d) {
                 .attr("x2", x)
                 .attr("y1", 206)
                 .attr("y2", 242)
-                .attr("stroke", "white")
+                .attr("stroke", "#404040")
                 .attr("stroke-width", "1px")
                 .style('opacity', 0)
                 .transition()
                 .duration(1000)
                 .style('opacity', 1);
-                
 
-        
-         ticks.append("svg:line")
+
+
+        ticks.append("svg:line")
                 .attr("x1", x)
                 .attr("x2", x)
                 .attr("y1", 173)
                 .attr("y2", 176)
                 .attr("stroke", "black")
                 .attr("stroke-width", "6px")
-                .attr("transform","translate("+0+","+20+")")
+                .attr("transform", "translate(" + 0 + "," + 20 + ")")
                 .transition()
                 .duration(600)
-                .attr("transform","translate("+0+","+0+")");
+                .attr("transform", "translate(" + 0 + "," + 0 + ")");
 
         canvas.append("svg:line")
                 .attr("x1", 45)
@@ -138,10 +149,10 @@ var urls = data2.map(function(d) {
                 .attr("y2", 173)
                 .attr("stroke", "black")
                 .attr("stroke-width", "4px")
-                .attr("transform","translate("+0+","+20+")")
+                .attr("transform", "translate(" + 0 + "," + 20 + ")")
                 .transition()
                 .duration(600)
-                .attr("transform","translate("+0+","+0+")");
+                .attr("transform", "translate(" + 0 + "," + 0 + ")");
 
         var circles = canvas.selectAll("circle")
                 .data(data2)
@@ -151,7 +162,6 @@ var urls = data2.map(function(d) {
                 .attr("cx", function(d) {
             return x(getDate(d));
         })
-                .data(data2)
                 .attr("id", function(d) {
             return  d.event_number;
         })
@@ -162,14 +172,69 @@ var urls = data2.map(function(d) {
                 .attr("class", "circles")
                 .style("stroke", "#B53636")
                 .style("stroke-width", 2)
-                .style("fill", "white")
-
+                .style("fill", "white")                
+                .each(function(){
+             currentX = d3.select(this).attr("cx");
+             if((currentX-lastX)>7 || (currentX-lastX)<-7)
+                 {
+                     alert("all good");
+                 }
+                 else
+                     {
+                     d3.select(this).remove();
+                     remove = i-1;
+                     alert(remove);
+                     }
+                     lastX=currentX;
+                     i++;
+                     })
+                 .each(function(){
+                 if(j===remove)
+                     {
+                         d3.select(this).remove();
+                         alert(x(new Date(dates[j])));
+                         canvas.append("circle")
+                         .attr("cy",225)
+                         .attr("cx", x(new Date(dates[j])))
+                         .attr("r",7)
+                         .attr("class", "circles")
+                         .style("stroke", "#B53636")
+                         .style("stroke-width", 2)
+                         .style("fill", "white");   
+                     }
+                     j++;
+                     })
                 .on("mouseover", function() {
+            eventId = d3.select(this).attr("id");
+
+            circleX = parseInt(d3.select(this).attr("cx"));
+            circleY = parseInt(d3.select(this).attr("cy")) + 8;
             revert = true;
             d3.select(this).transition().duration(400)
                     .attr("r", 9)
                     .style("fill", "#FFCCCC")
                     .style("cursor", "pointer");
+            var popUpLine = canvas.append("svg:line")
+                    .attr("x1", circleX)
+                    .attr("x2", circleX)
+                    .attr("y1", circleY)
+                    .attr("y2", circleY)
+                    .attr("stroke", "white")
+                    .attr("stroke-width", 2)
+                    .attr("id", "popUpLine")
+                    .transition().duration(400)
+                    .attr("y2", circleY + 50);
+
+            var popUpText = canvas.append("text")
+                    .data(data2)
+                    .attr("id", "popUpText")
+                    .attr("transform", "translate(" + (circleX) + "," + (circleY + 65) + ")")
+                    .attr("text-anchor", "middle")
+                    .attr("opacity", 0)
+                    .transition().delay(300).attr("opacity", 1)
+                    .text(titles[eventId])
+                    .attr("font-size", "12px");
+
 
         })
                 .on("click", function() {
@@ -187,7 +252,7 @@ var urls = data2.map(function(d) {
                     ;
 
             var circleX = d3.select(this).attr("cx") - 10;
-            var circleY = d3.select(this).attr("cy");
+            circleY = d3.select(this).attr("cy");
             if ((600 - circleX) < 160)
             {
                 eventOffset = 150 + circleX - 440;
@@ -301,9 +366,11 @@ var urls = data2.map(function(d) {
 
             eventImage = canvas.append("svg:image")
                     .attr("id", "eventImage")
-                    .attr("height", 140)//apparently only sets the height of the box containing the image: very convenient from scaling POV
+                    .attr("height", 140)//apparently only sets the height of 
+                    //the box containing the image: very convenient from scaling POV
                     .attr("width", 140)
-                    .attr("transform", "translate(" + (circleX - eventOffset + 10) + "," + (circleY - 70) + ")")
+                    .attr("transform", "translate(" + (circleX - eventOffset + 10)
+                    + "," + (circleY - 70) + ")")
                     .attr("opacity", 0)
                     .transition().delay(1500)
                     .attr("opacity", 1)
@@ -312,21 +379,23 @@ var urls = data2.map(function(d) {
             dateBox = canvas.append("rect")
                     .attr("id", "dateBox")
                     .attr("height", 22)
-                    .attr("width", 90)
+                    .attr("width", 100)
                     .attr("rx", 5)
                     .attr("ry", 5)
                     .attr("stroke", "black")
                     // .attr("stroke-width",1)
                     .attr("fill", "grey")
                     .attr("border-radius", 2)
-                    .attr("transform", "translate(" + (circleX - eventOffset + 35) + "," + (272) + ")")
+                    .attr("transform", "translate(" + (circleX - eventOffset + 30)
+                    + "," + (272) + ")")
                     .attr("opacity", 0)
                     .transition().delay(1500)
                     .attr("opacity", 1);
 
             date = canvas.append("text")
                     .attr("id", "date")
-                    .attr("transform", "translate(" + (circleX - eventOffset + 40) + "," + (290) + ")")
+                    .attr("transform", "translate(" + (circleX - eventOffset + 35)
+                    + "," + (290) + ")")
                     .attr("opacity", 0)
                     .transition().delay(1500).attr("opacity", 1)
                     .text(dates[eventId])
@@ -340,11 +409,17 @@ var urls = data2.map(function(d) {
                         .attr("r", 7)
                         .style("fill", "white")
                         .style("cursor", "default");
+                d3.select("body").selectAll("#popUpLine").transition().duration(200)
+                        .attr("y2", circleY).remove();
+
+                d3.select("body").selectAll("#popUpText").transition().duration(200)
+                        .attr("opacity", 0).remove();
             }
         })
 
                 .style('opacity', 0)
-                .transition() //transition opens up new "bracket" sort of. You can't put any type of mouse event after it
+                .transition() //transition opens up new "bracket" sort of.
+                // You can't put any type of mouse event after it
                 .duration(1000)
                 .style('opacity', 1);
 
@@ -361,15 +436,15 @@ var urls = data2.map(function(d) {
 });
 
 
-//
+//*****************************FORMATS EVENT DATES******************************
 function getDate(d) {
     return new Date(d.eDate);
 }
 
-
 //*************************** CLOSES TIMELINE EVENTS ***************************
 function close() {
-    d3.selectAll("#event, #eventImage, #closeEvent, #closeEventCircle, #dateBox, #date")
+    d3.selectAll("#event, #eventImage, #closeEvent, #closeEventCircle, #dateBox,\n\
+ #date, #popUpLine, #popUpText")
             .transition().duration(300).attr("opacity", 0).remove();
     setTimeout(function() {
         $('#dText').remove();
