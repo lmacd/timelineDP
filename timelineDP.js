@@ -12,11 +12,13 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
         var eventHeight = 300;
         var eventOffset = 150;
         var dy;
-        var j=0;
+        var j = 0;
         var i = 0; //counter for computing true months
         var circleY;
         var currentX;
-        var lastX=0;
+        var lastX = 0;
+        var xPosition;
+        var removed = false;
         var remove;
 
         var dates = data2.map(function(d) {
@@ -172,38 +174,31 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                 .attr("class", "circles")
                 .style("stroke", "#B53636")
                 .style("stroke-width", 2)
-                .style("fill", "white")                
-                .each(function(){
-             currentX = d3.select(this).attr("cx");
-             if((currentX-lastX)>7 || (currentX-lastX)<-7)
-                 {
-                     alert("all good");
-                 }
-                 else
-                     {
-                     d3.select(this).remove();
-                     remove = i-1;
-                     alert(remove);
-                     }
-                     lastX=currentX;
-                     i++;
-                     })
-                 .each(function(){
-                 if(j===remove)
-                     {
-                         d3.select(this).remove();
-                         alert(x(new Date(dates[j])));
-                         canvas.append("circle")
-                         .attr("cy",225)
-                         .attr("cx", x(new Date(dates[j])))
-                         .attr("r",7)
-                         .attr("class", "circles")
-                         .style("stroke", "#B53636")
-                         .style("stroke-width", 2)
-                         .style("fill", "white");   
-                     }
-                     j++;
-                     })
+                .style("fill", "white")
+                .each(function() {
+            currentX = d3.select(this).attr("cx");
+            if ((currentX - lastX) > 7 || (currentX - lastX) < -7)
+            {
+            }
+            else
+            {
+                d3.select(this).remove();
+                remove = i - 1;
+            }
+            lastX = currentX;
+            i++;
+        })
+                .each(function() {
+            if (j === remove)
+            {
+                d3.select(this).remove();
+                xPosition = x(new Date(dates[j]));
+                removed = true;
+
+
+            }
+            j++;
+        })
                 .on("mouseover", function() {
             eventId = d3.select(this).attr("id");
 
@@ -422,6 +417,53 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                 // You can't put any type of mouse event after it
                 .duration(1000)
                 .style('opacity', 1);
+
+        if (removed === true)
+        {
+            canvas.append("circle")
+                    .attr("cy", 225)
+                    .attr("cx", xPosition)
+                    .attr("r", 7)
+                    .attr("class", "circles")
+                    .style("stroke", "#B53636")
+                    .style("stroke-width", 2)
+                    .style("fill", "white")
+                    .on("mouseover", function() {
+                d3.select(this).transition()
+                        .attr("cy", 240);
+
+
+                canvas.append("circle")
+                        .attr("cy", 225)
+                        .attr("cx", xPosition)
+                        .attr("r", 7)
+                        .attr("class", "circles")
+                        .style("stroke", "#B53636")
+                        .style("stroke-width", 2)
+                        .style("fill", "white")
+                        .on("click",function(){
+                    alert("working");
+                        })
+                        .transition()
+                        .attr("cy", 210);                      
+            })
+                    .style('opacity', 0)
+                    .transition()
+                    .duration(1000)
+                    .style('opacity', 1);
+            canvas.append("text")
+                    .attr("y", 229)
+                    .attr("x", xPosition)
+                    .style("font-size", "12px")
+                    .style("font-weight", "bold")
+                    .attr("text-anchor", "middle")
+                    .text("2")
+                    .style('opacity', 0)
+                    .transition()
+                    .duration(1000)
+                    .style('opacity', 1);
+
+        }
 
         var xAxisGroup = canvas.append("g")
 
