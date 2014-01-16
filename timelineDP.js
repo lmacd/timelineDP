@@ -90,13 +90,12 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                 .data(data1)
                 .attr("width", 550)
                 .attr("height", 60)
-        .on("mouseover",function(){
-                    alert("timeline bump");
-                    d3.select(".dCircle1").transition().attr("cy",225).remove();
-                    d3.select(".dCircle2").transition().attr("cy",225).remove();
-                    doubleEvent();
+                .on("mouseover", function() {
+            d3.select(".dCircle1").transition().attr("cy", 225).remove();
+            d3.select(".dCircle2").transition().attr("cy", 225).remove();
+            doubleEvent();
 
-                        })
+        })
                 .on("click", function() {
             close();
         })
@@ -208,7 +207,7 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
             j++;
         })
                 .on("mouseover", function() {
-            mouseOver(this);
+            mouseOver(this, 1);
 
 
         })
@@ -247,21 +246,45 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                     .attr("cy", 225)
                     .attr("cx", xPosition)
                     .attr("r", 7)
-                    .attr("class", "circles")
+                    .attr("class", "doubleCircle")
                     .style("stroke", "#B53636")
                     .style("stroke-width", 2)
                     .style("fill", "white")
                     .on("mouseover", function() {
+                    doubleGenerate(this);
+            })
+                    .style('opacity', 0)
+                    .transition()
+                    .duration(1000)
+                    .style('opacity', 1);
 
-                canvas.append("rect")
+            canvas.append("text")
+                    .attr("y", 229)
+                    .attr("x", xPosition)
+                    .style("font-size", "12px")
+                    .style("font-weight", "bold")
+                    .attr("text-anchor", "middle")
+                    .text("2")
+                   /* .on("mouseover",function(){
+                generateDouble("#doubleCircle");
+                    })*/
+                    .style('opacity', 0)
+                    .transition()
+                    .duration(1000)
+                    .style('opacity', 1);
+        }
+
+//********************* GENERATES TWO SEPARATE EVENTS **************************                
+        function doubleGenerate(target){
+            canvas.append("rect")
                         .attr("height", 50)
                         .attr("width", 20)
-                        .attr("x", xPosition-10)
-                        .attr("y",199)
-                        .style("fill","black");
-                        
+                        .attr("x", xPosition - 10)
+                        .attr("y", 199)
+                        .style("fill", "black");
 
-                d3.select(this).transition()
+
+                d3.select(target).transition()
                         .attr("cy", 240).remove();
 
                 canvas.append("circle")
@@ -274,7 +297,7 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                         .style("stroke-width", 2)
                         .style("fill", "white")
                         .on("mouseover", function() {
-                    mouseOver(this);
+                    mouseOver(this, 1);
                 })
                         .on("click", function() {
                     onClick(this);
@@ -307,7 +330,7 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                         .style("stroke-width", 2)
                         .style("fill", "white")
                         .on("mouseover", function() {
-                    mouseOver(this);
+                    mouseOver(this, 2);
                 })
                         .on("click", function() {
                     onClick(this);
@@ -316,24 +339,6 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                     mouseOut(this);
                 })
                         .attr("opacity", 0).transition().delay(100).attr("opacity", 1);
-
-            })
-                    .style('opacity', 0)
-                    .transition()
-                    .duration(1000)
-                    .style('opacity', 1);
-
-            canvas.append("text")
-                    .attr("y", 229)
-                    .attr("x", xPosition)
-                    .style("font-size", "12px")
-                    .style("font-weight", "bold")
-                    .attr("text-anchor", "middle")
-                    .text("2")
-                    .style('opacity', 0)
-                    .transition()
-                    .duration(1000)
-                    .style('opacity', 1);
         }
 
 //********************** WHEN EVENT CIRCLE IS CLICKED **************************
@@ -488,12 +493,25 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
         }
 
 //******************* WHEN MOUSE HOVERS ON EVENT CIRCLE ************************
-        function mouseOver(target) {
+        function mouseOver(target, direction) {
+            var textShift;
+            var lineShift;
             eventId = d3.select(target).attr("id");
-
             circleX = parseInt(d3.select(target).attr("cx"));
             circleY = parseInt(d3.select(target).attr("cy")) + 8;
             revert = true;
+                if (direction === 1)
+                {
+                    lineShift=circleY+50;
+                    textShift=circleY+65;
+                }
+                else if (direction === 2)
+                {
+                    circleY=circleY-17;
+                    lineShift=circleY-50;
+                    textShift=circleY-65;
+                }
+            
             d3.select(target).transition().duration(400)
                     .attr("r", 9)
                     .style("fill", "#FFCCCC")
@@ -507,12 +525,12 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                     .attr("stroke-width", 2)
                     .attr("id", "popUpLine")
                     .transition().duration(400)
-                    .attr("y2", circleY + 50);
+                    .attr("y2", lineShift);
 
             var popUpText = canvas.append("text")
                     .data(data2)
                     .attr("id", "popUpText")
-                    .attr("transform", "translate(" + (circleX) + "," + (circleY + 65) + ")")
+                    .attr("transform", "translate(" + (circleX) + "," + (textShift) + ")")
                     .attr("text-anchor", "middle")
                     .attr("opacity", 0)
                     .transition().delay(300).attr("opacity", 1)
