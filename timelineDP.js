@@ -90,6 +90,13 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                 .data(data1)
                 .attr("width", 550)
                 .attr("height", 60)
+        .on("mouseover",function(){
+                    alert("timeline bump");
+                    d3.select(".dCircle1").transition().attr("cy",225).remove();
+                    d3.select(".dCircle2").transition().attr("cy",225).remove();
+                    doubleEvent();
+
+                        })
                 .on("click", function() {
             close();
         })
@@ -222,7 +229,7 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
 
         if (removed === true)
         {
-           doubleEvent(); 
+            doubleEvent();
         }
 
         var xAxisGroup = canvas.append("g")
@@ -235,8 +242,8 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                 .attr("transform", "translate(0,170)");
 
 //******************* CREATES CIRCLE FOR DOUBLE EVENT **************************
-function doubleEvent(){
-canvas.append("circle")
+        function doubleEvent() {
+            canvas.append("circle")
                     .attr("cy", 225)
                     .attr("cx", xPosition)
                     .attr("r", 7)
@@ -245,67 +252,77 @@ canvas.append("circle")
                     .style("stroke-width", 2)
                     .style("fill", "white")
                     .on("mouseover", function() {
+
+                canvas.append("rect")
+                        .attr("height", 50)
+                        .attr("width", 20)
+                        .attr("x", xPosition-10)
+                        .attr("y",199)
+                        .style("fill","black");
+                        
+
                 d3.select(this).transition()
                         .attr("cy", 240).remove();
 
-                        canvas.append("circle")
-                .attr("cy", 240)
+                canvas.append("circle")
+                        .attr("cy", 240)
                         .attr("cx", xPosition)
-                        .attr("id",remove)
+                        .attr("id", remove)
                         .attr("r", 7)
-                        .attr("class", "circles")
+                        .attr("class", "dCircle2")
                         .style("stroke", "#B53636")
                         .style("stroke-width", 2)
-                        .style("fill", "white") 
-                        .on("mouseover",function(){
+                        .style("fill", "white")
+                        .on("mouseover", function() {
                     mouseOver(this);
-                        })
-                        .on("click",function(){
+                })
+                        .on("click", function() {
                     onClick(this);
-                        })
-                        .on("mouseout",function(){
+                })
+                        .on("mouseout", function() {
                     mouseOut(this);
-                        })
-                        .attr("opacity",0).transition().delay(100).attr("opacity",1);  
+                })
+                        .attr("opacity", 0).transition().delay(100).attr("opacity", 1);
 
                 canvas.append("circle")
                         .attr("cy", 225)
                         .attr("cx", xPosition)
-                        .attr("id",remove)
+                        .attr("id", remove)
                         .attr("r", 7)
                         .attr("class", "circles")
                         .style("stroke", "#B53636")
                         .style("stroke-width", 2)
-                        .style("fill", "white")                        
+                        .style("fill", "white")
                         .transition()
                         .attr("cy", 210)
                         .remove();
-                
+
                 canvas.append("circle")
-                .attr("cy", 210)
+                        .attr("cy", 210)
                         .attr("cx", xPosition)
-                        .attr("id",(remove+1))
+                        .attr("id", (remove + 1))
                         .attr("r", 7)
-                        .attr("class", "circles")
+                        .attr("class", "dCircle1")
                         .style("stroke", "#B53636")
                         .style("stroke-width", 2)
-                        .style("fill", "white") 
-                        .on("mouseover",function(){
+                        .style("fill", "white")
+                        .on("mouseover", function() {
                     mouseOver(this);
-                        })
-                        .on("click",function(){
+                })
+                        .on("click", function() {
                     onClick(this);
-                        })
-                        .on("mouseout",function(){
+                })
+                        .on("mouseout", function() {
                     mouseOut(this);
-                        })
-                        .attr("opacity",0).transition().delay(100).attr("opacity",1);  
-                      
+                })
+                        .attr("opacity", 0).transition().delay(100).attr("opacity", 1);
+
             })
                     .style('opacity', 0)
                     .transition()
                     .duration(1000)
                     .style('opacity', 1);
+
             canvas.append("text")
                     .attr("y", 229)
                     .attr("x", xPosition)
@@ -317,10 +334,10 @@ canvas.append("circle")
                     .transition()
                     .duration(1000)
                     .style('opacity', 1);
-}
+        }
 
 //********************** WHEN EVENT CIRCLE IS CLICKED **************************
-function onClick(target){
+        function onClick(target) {
 
             eventId = d3.select(target).attr("id");
             close();
@@ -403,7 +420,7 @@ function onClick(target){
             closeEvent = canvas.append("svg:image")
                     .on("mouseover", function() {
                 mouseOverEvent(this);
-                    })
+            })
 
                     .on("mouseout", function() {
                 mouseOutEvent(this);
@@ -468,11 +485,11 @@ function onClick(target){
                     .transition().delay(1500).attr("opacity", 1)
                     .text(dates[eventId])
                     .attr("font-size", "20px");
-}
+        }
 
 //******************* WHEN MOUSE HOVERS ON EVENT CIRCLE ************************
-function mouseOver(target){
-    eventId = d3.select(target).attr("id");
+        function mouseOver(target) {
+            eventId = d3.select(target).attr("id");
 
             circleX = parseInt(d3.select(target).attr("cx"));
             circleY = parseInt(d3.select(target).attr("cy")) + 8;
@@ -501,11 +518,11 @@ function mouseOver(target){
                     .transition().delay(300).attr("opacity", 1)
                     .text(titles[eventId])
                     .attr("font-size", "12px");
-}
+        }
 
 //********************** WHEN MOUSE LEAVES EVENT CIRCLE ************************
-function mouseOut(){
-    if (revert === true) {
+        function mouseOut() {
+            if (revert === true) {
                 d3.select("body").selectAll("circle").transition().duration(200)
                         .attr("r", 7)
                         .style("fill", "white")
@@ -515,34 +532,35 @@ function mouseOut(){
 
                 d3.select("body").selectAll("#popUpText").transition().duration(200)
                         .attr("opacity", 0).remove();
-            }}
+            }
+        }
 
 //******************** WHEN MOUSE ENTERS CLOSE EVENT ***************************
-function mouseOverEvent(target){
- d3.select(target)
-                        .style("cursor", "pointer")
-                        .transition().duration(500)
-                        .attr("transform", "translate(" + (circleX - eventOffset + 270) + "," + (circleY - (eventHeight / 2 - 10)) + ") rotate(45 10 10)");
-                d3.select("#closeEventCircle")
-                        .transition().duration(200)
-                        .attr("height", 22).attr("width", 22)
-                        .attr("transform", "translate(" + (circleX - eventOffset + 269) + "," + (circleY - (eventHeight / 2 - 9)) + ")")
-                        .transition().duration(300)
-                        .attr("height", 15).attr("width", 15)
-                        .attr("transform", "translate(" + (circleX - eventOffset + 272.5) + "," + (circleY - (eventHeight / 2 - 12.5)) + ")");
-           
-}
+        function mouseOverEvent(target) {
+            d3.select(target)
+                    .style("cursor", "pointer")
+                    .transition().duration(500)
+                    .attr("transform", "translate(" + (circleX - eventOffset + 270) + "," + (circleY - (eventHeight / 2 - 10)) + ") rotate(45 10 10)");
+            d3.select("#closeEventCircle")
+                    .transition().duration(200)
+                    .attr("height", 22).attr("width", 22)
+                    .attr("transform", "translate(" + (circleX - eventOffset + 269) + "," + (circleY - (eventHeight / 2 - 9)) + ")")
+                    .transition().duration(300)
+                    .attr("height", 15).attr("width", 15)
+                    .attr("transform", "translate(" + (circleX - eventOffset + 272.5) + "," + (circleY - (eventHeight / 2 - 12.5)) + ")");
+
+        }
 
 //******************** WHEN MOUSE LEAVES CLOSE EVENT ***************************
-function mouseOutEvent(target){
-  d3.select(target)
-                        .transition().duration(500)
-                        .attr("transform", "translate(" + (circleX - eventOffset + 270) + "," + (circleY - (eventHeight / 2 - 10)) + ") rotate(0 10 10)");
-                d3.select("#closeEventCircle")
-                        .transition().duration(500)
-                        .attr("height", 20).attr("width", 20)
-                        .attr("transform", "translate(" + (circleX - eventOffset + 270) + "," + (circleY - (eventHeight / 2 - 10)) + ")");  
-}
+        function mouseOutEvent(target) {
+            d3.select(target)
+                    .transition().duration(500)
+                    .attr("transform", "translate(" + (circleX - eventOffset + 270) + "," + (circleY - (eventHeight / 2 - 10)) + ") rotate(0 10 10)");
+            d3.select("#closeEventCircle")
+                    .transition().duration(500)
+                    .attr("height", 20).attr("width", 20)
+                    .attr("transform", "translate(" + (circleX - eventOffset + 270) + "," + (circleY - (eventHeight / 2 - 10)) + ")");
+        }
 
 
 
