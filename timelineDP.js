@@ -15,6 +15,7 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
         var j = 0;
         var i = 0; //counter for computing true months
         var circleY;
+        var circleX;
         var currentX;
         var lastX = 0;
         var xPosition;
@@ -200,35 +201,7 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
             j++;
         })
                 .on("mouseover", function() {
-            eventId = d3.select(this).attr("id");
-
-            circleX = parseInt(d3.select(this).attr("cx"));
-            circleY = parseInt(d3.select(this).attr("cy")) + 8;
-            revert = true;
-            d3.select(this).transition().duration(400)
-                    .attr("r", 9)
-                    .style("fill", "#FFCCCC")
-                    .style("cursor", "pointer");
-            var popUpLine = canvas.append("svg:line")
-                    .attr("x1", circleX)
-                    .attr("x2", circleX)
-                    .attr("y1", circleY)
-                    .attr("y2", circleY)
-                    .attr("stroke", "white")
-                    .attr("stroke-width", 2)
-                    .attr("id", "popUpLine")
-                    .transition().duration(400)
-                    .attr("y2", circleY + 50);
-
-            var popUpText = canvas.append("text")
-                    .data(data2)
-                    .attr("id", "popUpText")
-                    .attr("transform", "translate(" + (circleX) + "," + (circleY + 65) + ")")
-                    .attr("text-anchor", "middle")
-                    .attr("opacity", 0)
-                    .transition().delay(300).attr("opacity", 1)
-                    .text(titles[eventId])
-                    .attr("font-size", "12px");
+            mouseOver(this);
 
 
         })
@@ -246,7 +219,7 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                     .attr("r", 0)
                     ;
 
-            var circleX = d3.select(this).attr("cx") - 10;
+            circleX = d3.select(this).attr("cx") - 10;
             circleY = d3.select(this).attr("cy");
             if ((600 - circleX) < 160)
             {
@@ -313,27 +286,11 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
 
             closeEvent = canvas.append("svg:image")
                     .on("mouseover", function() {
-                d3.select(this)
-                        .style("cursor", "pointer")
-                        .transition().duration(500)
-                        .attr("transform", "translate(" + (circleX - eventOffset + 270) + "," + (circleY - (eventHeight / 2 - 10)) + ") rotate(45 10 10)");
-                d3.select("#closeEventCircle")
-                        .transition().duration(200)
-                        .attr("height", 22).attr("width", 22)
-                        .attr("transform", "translate(" + (circleX - eventOffset + 269) + "," + (circleY - (eventHeight / 2 - 9)) + ")")
-                        .transition().duration(300)
-                        .attr("height", 15).attr("width", 15)
-                        .attr("transform", "translate(" + (circleX - eventOffset + 272.5) + "," + (circleY - (eventHeight / 2 - 12.5)) + ")");
-            })
+                mouseOverEvent(this);
+                    })
 
                     .on("mouseout", function() {
-                d3.select(this)
-                        .transition().duration(500)
-                        .attr("transform", "translate(" + (circleX - eventOffset + 270) + "," + (circleY - (eventHeight / 2 - 10)) + ") rotate(0 10 10)");
-                d3.select("#closeEventCircle")
-                        .transition().duration(500)
-                        .attr("height", 20).attr("width", 20)
-                        .attr("transform", "translate(" + (circleX - eventOffset + 270) + "," + (circleY - (eventHeight / 2 - 10)) + ")");
+                mouseOutEvent(this);
             })
 
 
@@ -399,17 +356,7 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
         })
 
                 .on("mouseout", function() {
-            if (revert === true) {
-                d3.select("body").selectAll("circle").transition().duration(200)
-                        .attr("r", 7)
-                        .style("fill", "white")
-                        .style("cursor", "default");
-                d3.select("body").selectAll("#popUpLine").transition().duration(200)
-                        .attr("y2", circleY).remove();
-
-                d3.select("body").selectAll("#popUpText").transition().duration(200)
-                        .attr("opacity", 0).remove();
-            }
+            mouseOut();
         })
 
                 .style('opacity', 0)
@@ -420,7 +367,21 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
 
         if (removed === true)
         {
-            canvas.append("circle")
+           doubleEvent(); 
+        }
+
+        var xAxisGroup = canvas.append("g")
+
+                .call(xAxis)
+                .attr("transform", "translate(0,200)")
+                //.tickFormat(d3.time.format("%Y")) 
+                .transition()
+                .duration(1000)
+                .attr("transform", "translate(0,170)");
+
+//******************* CREATES CIRCLE FOR DOUBLE EVENT **************************
+function doubleEvent(){
+canvas.append("circle")
                     .attr("cy", 225)
                     .attr("cx", xPosition)
                     .attr("r", 7)
@@ -430,22 +391,57 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                     .style("fill", "white")
                     .on("mouseover", function() {
                 d3.select(this).transition()
-                        .attr("cy", 240);
+                        .attr("cy", 240).remove();
 
-
-                canvas.append("circle")
-                        .attr("cy", 225)
+                        canvas.append("circle")
+                .attr("cy", 240)
                         .attr("cx", xPosition)
+                        .attr("id",remove)
                         .attr("r", 7)
                         .attr("class", "circles")
                         .style("stroke", "#B53636")
                         .style("stroke-width", 2)
-                        .style("fill", "white")
+                        .style("fill", "white") 
+                        .on("mouseover",function(){
+                    mouseOver(this);
+                        })
+                        .on("mouseout",function(){
+                    mouseOut(this);
+                        })
+                        .attr("opacity",0).transition().delay(100).attr("opacity",1);  
+
+                canvas.append("circle")
+                        .attr("cy", 225)
+                        .attr("cx", xPosition)
+                        .attr("id",remove)
+                        .attr("r", 7)
+                        .attr("class", "circles")
+                        .style("stroke", "#B53636")
+                        .style("stroke-width", 2)
+                        .style("fill", "white")                        
                         .on("click",function(){
-                    alert("working");
                         })
                         .transition()
-                        .attr("cy", 210);                      
+                        .attr("cy", 210)
+                        .remove();
+                
+                canvas.append("circle")
+                .attr("cy", 210)
+                        .attr("cx", xPosition)
+                        .attr("id",(remove+1))
+                        .attr("r", 7)
+                        .attr("class", "circles")
+                        .style("stroke", "#B53636")
+                        .style("stroke-width", 2)
+                        .style("fill", "white") 
+                        .on("mouseover",function(){
+                    mouseOver(this);
+                        })
+                        .on("mouseout",function(){
+                    mouseOut(this);
+                        })
+                        .attr("opacity",0).transition().delay(100).attr("opacity",1);  
+                      
             })
                     .style('opacity', 0)
                     .transition()
@@ -462,17 +458,85 @@ d3.json("timelineSettings.json", function(data1) { //data1 is the timeline setti
                     .transition()
                     .duration(1000)
                     .style('opacity', 1);
+}
 
-        }
+//********************** WHEN EVENT CIRCLE IS CLICKED **************************
 
-        var xAxisGroup = canvas.append("g")
+//******************* WHEN MOUSE HOVERS ON EVENT CIRCLE ************************
+function mouseOver(target){
+    eventId = d3.select(target).attr("id");
 
-                .call(xAxis)
-                .attr("transform", "translate(0,200)")
-                //.tickFormat(d3.time.format("%Y")) 
-                .transition()
-                .duration(1000)
-                .attr("transform", "translate(0,170)");
+            circleX = parseInt(d3.select(target).attr("cx"));
+            circleY = parseInt(d3.select(target).attr("cy")) + 8;
+            revert = true;
+            d3.select(target).transition().duration(400)
+                    .attr("r", 9)
+                    .style("fill", "#FFCCCC")
+                    .style("cursor", "pointer");
+            var popUpLine = canvas.append("svg:line")
+                    .attr("x1", circleX)
+                    .attr("x2", circleX)
+                    .attr("y1", circleY)
+                    .attr("y2", circleY)
+                    .attr("stroke", "white")
+                    .attr("stroke-width", 2)
+                    .attr("id", "popUpLine")
+                    .transition().duration(400)
+                    .attr("y2", circleY + 50);
+
+            var popUpText = canvas.append("text")
+                    .data(data2)
+                    .attr("id", "popUpText")
+                    .attr("transform", "translate(" + (circleX) + "," + (circleY + 65) + ")")
+                    .attr("text-anchor", "middle")
+                    .attr("opacity", 0)
+                    .transition().delay(300).attr("opacity", 1)
+                    .text(titles[eventId])
+                    .attr("font-size", "12px");
+}
+
+//********************** WHEN MOUSE LEAVES EVENT CIRCLE ************************
+function mouseOut(){
+    if (revert === true) {
+                d3.select("body").selectAll("circle").transition().duration(200)
+                        .attr("r", 7)
+                        .style("fill", "white")
+                        .style("cursor", "default");
+                d3.select("body").selectAll("#popUpLine").transition().duration(200)
+                        .attr("y2", circleY).remove();
+
+                d3.select("body").selectAll("#popUpText").transition().duration(200)
+                        .attr("opacity", 0).remove();
+            }}
+
+//******************** WHEN MOUSE ENTERS CLOSE EVENT ***************************
+function mouseOverEvent(target){
+ d3.select(target)
+                        .style("cursor", "pointer")
+                        .transition().duration(500)
+                        .attr("transform", "translate(" + (circleX - eventOffset + 270) + "," + (circleY - (eventHeight / 2 - 10)) + ") rotate(45 10 10)");
+                d3.select("#closeEventCircle")
+                        .transition().duration(200)
+                        .attr("height", 22).attr("width", 22)
+                        .attr("transform", "translate(" + (circleX - eventOffset + 269) + "," + (circleY - (eventHeight / 2 - 9)) + ")")
+                        .transition().duration(300)
+                        .attr("height", 15).attr("width", 15)
+                        .attr("transform", "translate(" + (circleX - eventOffset + 272.5) + "," + (circleY - (eventHeight / 2 - 12.5)) + ")");
+           
+}
+
+//******************** WHEN MOUSE LEAVES CLOSE EVENT ***************************
+function mouseOutEvent(target){
+  d3.select(target)
+                        .transition().duration(500)
+                        .attr("transform", "translate(" + (circleX - eventOffset + 270) + "," + (circleY - (eventHeight / 2 - 10)) + ") rotate(0 10 10)");
+                d3.select("#closeEventCircle")
+                        .transition().duration(500)
+                        .attr("height", 20).attr("width", 20)
+                        .attr("transform", "translate(" + (circleX - eventOffset + 270) + "," + (circleY - (eventHeight / 2 - 10)) + ")");  
+}
+
+
 
     });
 });
@@ -542,7 +606,7 @@ function createSVGtext(caption, x, y) {
     svgTSpan.setAttributeNS(null, 'y', y);
 
     var tSpanTextNode = document.createTextNode(line);
-    svgTSpan.appendChild(tSpanTextNode);
+    svgTSpan.appendChild(tSpanTextNode)
 
     svgText.appendChild(svgTSpan);
     return svgText;
